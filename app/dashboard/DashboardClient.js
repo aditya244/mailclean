@@ -65,7 +65,7 @@ export default function DashboardClient() {
   }
   return (
     <>
-      <StatsBar refreshKey={statsRefreshKey}/>
+      <StatsBar refreshKey={statsRefreshKey} emailCount={emailCount}/>
       <div style={{ marginTop: '24px' }}>
         <CategorySummary
           onCategorySelect={setSelectedCategory}

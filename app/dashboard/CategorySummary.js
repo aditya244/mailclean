@@ -116,22 +116,29 @@ export default function CategorySummary({
   }, []);
 
   async function loadExistingSummary() {
-    try {
-      const res = await fetch("/api/emails/summary");
-      const data = await res.json();
-      if (data.summary) {
-        // Restore the classify result from DB so dashboard shows on reload
-        setClassifyResult({
-          summary: data.summary,
-          layerStats: data.layerStats,
-          classified: Object.values(data.summary).reduce((a, b) => a + b, 0),
-        });
-        setScanDone(true);
-      }
-    } catch (err) {
-      console.error("Error loading summary:", err);
+  try {
+    const [summaryRes, countRes] = await Promise.all([
+      fetch('/api/emails/summary'),
+      fetch('/api/gmail/count'),
+    ])
+    const summaryData = await summaryRes.json()
+    const countData = await countRes.json()
+
+    if (summaryData.summary) {
+      setClassifyResult({
+        summary: summaryData.summary,
+        layerStats: summaryData.layerStats,
+        classified: Object.values(summaryData.summary).reduce((a, b) => a + b, 0),
+      })
+      setScanDone(true)
     }
+
+    if (countData.count) setEmailCount(countData.count)
+
+  } catch (err) {
+    console.error('Error loading summary:', err)
   }
+}
 
   async function startScanAndClassify() {
     try {
