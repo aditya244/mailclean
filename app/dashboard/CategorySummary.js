@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import ScanProgress from "./ScanProgress";
 
 const CATEGORY_CONFIG = {
   Spam: { emoji: "🚫", risk: "red", riskLabel: "Safe to delete" },
@@ -82,6 +83,23 @@ const RISK_TEXT = {
   green: "#15803d",
 };
 
+// Tier config — swap with session.user.tier when billing is live
+const CURRENT_TIER = 'free'
+
+const TIER_BATCH_OPTIONS = {
+  free:      [100],
+  pro:       [100, 200, 500],
+  annual:    [100, 200, 500, 1000],
+  deepclean: [100, 500, 1000, 2500, 5000],
+}
+
+const TIER_LABELS = {
+  free:      'Free',
+  pro:       'Pro',
+  annual:    'Annual',
+  deepclean: 'Deep Clean',
+}
+
 export default function CategorySummary({
   onCategorySelect,
   emailCount,
@@ -110,65 +128,94 @@ export default function CategorySummary({
   }
 
   const [progress, setProgress] = useState(null);
+  const batchOptions = TIER_BATCH_OPTIONS[CURRENT_TIER] || [100]
+  const [batchSize, setBatchSize] = useState(batchOptions[batchOptions.length - 1])
 
   useEffect(() => {
     loadExistingSummary();
   }, []);
 
   async function loadExistingSummary() {
-  try {
-    const [summaryRes, countRes] = await Promise.all([
-      fetch('/api/emails/summary'),
-      fetch('/api/gmail/count'),
-    ])
-    const summaryData = await summaryRes.json()
-    const countData = await countRes.json()
+    try {
+      const [summaryRes, countRes] = await Promise.all([
+        fetch("/api/emails/summary"),
+        fetch("/api/gmail/count"),
+      ]);
+      const summaryData = await summaryRes.json();
+      const countData = await countRes.json();
 
-    if (summaryData.summary) {
-      setClassifyResult({
-        summary: summaryData.summary,
-        layerStats: summaryData.layerStats,
-        classified: Object.values(summaryData.summary).reduce((a, b) => a + b, 0),
-      })
-      setScanDone(true)
+      if (summaryData.summary) {
+        setClassifyResult({
+          summary: summaryData.summary,
+          layerStats: summaryData.layerStats,
+          classified: Object.values(summaryData.summary).reduce(
+            (a, b) => a + b,
+            0,
+          ),
+        });
+        setScanDone(true);
+      }
+
+      if (countData.count) setEmailCount(countData.count);
+    } catch (err) {
+      console.error("Error loading summary:", err);
     }
-
-    if (countData.count) setEmailCount(countData.count)
-
-  } catch (err) {
-    console.error('Error loading summary:', err)
   }
-}
 
   async function startScanAndClassify() {
     try {
       setError(null);
       setScanDone(false);
       setClassifyResult(null);
-      setProgress("Checking your mailbox...");
 
-      // Step 1: Get count
+      // Get email count first
       const countRes = await fetch("/api/gmail/count");
       const countData = await countRes.json();
       if (countData.error) throw new Error(countData.error);
       setEmailCount(countData.count);
-      setProgress("Scanning emails...");
 
-      // Step 2: Scan
-      const scanRes = await fetch("/api/gmail/scan", { method: "POST" });
-      const scanData = await scanRes.json();
-      if (scanData.error) throw new Error(scanData.error);
-      setScanDone(true);
-      setProgress("Classifying emails...");
+      // Open SSE connection
+      const url = `/api/gmail/process?batchSize=${batchSize}`;
+      const eventSource = new EventSource(url);
 
-      // Step 3: Classify
-      const classifyRes = await fetch("/api/gmail/classify", {
-        method: "POST",
-      });
-      const classifyData = await classifyRes.json();
-      if (classifyData.error) throw new Error(classifyData.error);
-      setClassifyResult(classifyData);
-      setProgress(null);
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        if (data.error) {
+          setError(data.error);
+          setProgress(null);
+          eventSource.close();
+          return;
+        }
+
+        if (data.stage === "done") {
+          setClassifyResult({
+            summary: data.summary,
+            layerStats: data.layerStats,
+            classified: data.classified,
+          });
+          setScanDone(true);
+          setProgress(null);
+          eventSource.close();
+          return;
+        }
+
+        // Update progress
+        setProgress({
+          stage: data.stage,
+          message: data.message,
+          percent: data.percent || 0,
+          progress: data.progress || 0,
+          total: data.total || batchSize,
+        });
+      };
+
+      eventSource.onerror = (err) => {
+        console.error("SSE error:", err);
+        setError("Connection lost. Please try again.");
+        setProgress(null);
+        eventSource.close();
+      };
     } catch (err) {
       setError(err.message);
       setProgress(null);
@@ -208,200 +255,194 @@ export default function CategorySummary({
   }
 
   return (
-    <div className="space-y-6">
-      {/* Mailbox Card */}
-      <div className="bg-white rounded-xl border border-gray-200 p-8">
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">
-          Your Mailbox
-        </h2>
-        <p className="text-gray-500 text-sm mb-6">
-          We only read sender info, subject lines and headers — never the
-          content of your emails.
-        </p>
+  <div className="space-y-6">
 
-        {emailCount !== null && (
-          <div className="mb-6">
-            <p className="text-4xl font-bold text-gray-900">
-              {emailCount.toLocaleString()}
-            </p>
-            <p className="text-gray-500 text-sm mt-1">
-              total emails in your mailbox
-            </p>
-          </div>
-        )}
+    {/* Mailbox Card */}
+    <div className="bg-white rounded-xl border border-gray-200 p-8">
+      <h2 className="text-lg font-semibold text-gray-900 mb-2">Your Mailbox</h2>
+      <p className="text-gray-500 text-sm mb-6">
+        We only read sender info, subject lines and headers — never the content of your emails.
+      </p>
 
-        {/* Progress indicator */}
-        {progress && (
-          <div className="mb-4 flex items-center gap-3">
-            <div className="w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-            <p className="text-sm text-indigo-600">{progress}</p>
-          </div>
-        )}
-
-        {!progress && (
-          <button
-            onClick={startScanAndClassify}
-            disabled={!!progress}
-            style={{
-              padding: "10px 24px",
-              backgroundColor: "#276FBF",
-              color: "#ffffff",
-              border: "none",
-              borderRadius: "8px",
-              fontSize: "14px",
-              fontWeight: "500",
-              cursor: "pointer",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
-            {classifyResult ? (
-              <>
-                <span style={{ fontSize: "14px" }}>↻</span>
-                Rescan Emails
-              </>
-            ) : (
-              <>
-                <span style={{ fontSize: "14px" }}>→</span>
-                Scan & Clean
-              </>
-            )}
-          </button>
-        )}
-      </div>
-
-      {/* Classification Results */}
-      {classifyResult && classifyResult.summary && (
-        <div className="bg-white rounded-xl border border-gray-200 p-8">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Your Inbox Report
-            </h2>
-          </div>
-          <p className="text-sm text-gray-400 mb-6">
-            Click any category to review the emails inside.
-          </p>
-
-          <div className="space-y-3">
-            {Object.entries(classifyResult.summary)
-              .sort((a, b) => {
-                const orderA = CATEGORY_ORDER.indexOf(a[0]);
-                const orderB = CATEGORY_ORDER.indexOf(b[0]);
-                // If category not in order list, put it before Finance/Work/Personal
-                const posA = orderA === -1 ? 8 : orderA;
-                const posB = orderB === -1 ? 8 : orderB;
-                return posA - posB;
-              })
-              .map(([category, count]) => {
-                const config = CATEGORY_CONFIG[category] || {
-                  emoji: "📧",
-                  risk: "yellow",
-                  riskLabel: "Review",
-                };
-                return (
-                  <button
-                    key={category}
-                    onClick={() => onCategorySelect(category)}
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "16px",
-                      borderRadius: "8px",
-                      border: `1px solid`,
-                      cursor: "pointer",
-                      marginBottom: "0",
-                      backgroundColor: RISK_BG[config.risk],
-                      borderColor: RISK_BORDER[config.risk],
-                      color: RISK_TEXT[config.risk],
-                    }}
-                  >
-                    {/* Left side */}
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "12px",
-                      }}
-                    >
-                      <span style={{ fontSize: "20px" }}>{config.emoji}</span>
-                      <div style={{ textAlign: "left" }}>
-                        <p
-                          style={{
-                            margin: "0",
-                            fontSize: "14px",
-                            fontWeight: "500",
-                          }}
-                        >
-                          {category}
-                        </p>
-                        <p
-                          style={{
-                            margin: "0",
-                            fontSize: "12px",
-                            opacity: "0.7",
-                          }}
-                        >
-                          {config.riskLabel}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Right side */}
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "12px",
-                      }}
-                    >
-                      {CATEGORY_SUGGESTIONS[category] && (
-                        <span
-                          style={{
-                            fontSize: "11px",
-                            fontWeight: "500",
-                            color: CATEGORY_SUGGESTIONS[category].color,
-                            backgroundColor: CATEGORY_SUGGESTIONS[category].bg,
-                            padding: "3px 10px",
-                            borderRadius: "999px",
-                            whiteSpace: "nowrap",
-                            width: "120px",
-                            textAlign: "center",
-                            display: "inline-block",
-                            boxSizing: "border-box",
-                          }}
-                        >
-                          Suggested: {CATEGORY_SUGGESTIONS[category].action}
-                        </span>
-                      )}
-                      <span
-                        style={{
-                          fontWeight: "700",
-                          fontSize: "18px",
-                          minWidth: "32px",
-                          textAlign: "right",
-                        }}
-                      >
-                        {count}
-                      </span>
-                      <span style={{ fontSize: "12px", opacity: "0.5" }}>
-                        →
-                      </span>
-                    </div>
-                  </button>
-                );
-              })}
-          </div>
+      {/* Email count */}
+      {emailCount !== null && (
+        <div className="mb-6">
+          <p className="text-4xl font-bold text-gray-900">{emailCount.toLocaleString()}</p>
+          <p className="text-gray-500 text-sm mt-1">total emails in your mailbox</p>
         </div>
       )}
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-          <p className="text-red-700 text-sm font-medium">Error: {error}</p>
+      {/* Batch size selector — only show when not scanning */}
+      {!progress && (
+        <div style={{ marginBottom: '20px' }}>
+          <p style={{ fontSize: '12px', color: '#6b7280', marginBottom: '8px', marginTop: '0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            Emails to scan
+            <span style={{
+              fontSize: '11px',
+              color: '#4f46e5',
+              backgroundColor: '#eef2ff',
+              padding: '2px 8px',
+              borderRadius: '999px',
+              fontWeight: '500',
+            }}>
+              {TIER_LABELS[CURRENT_TIER]} Plan
+            </span>
+          </p>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {batchOptions.map(option => (
+              <button
+                key={option}
+                onClick={() => setBatchSize(option)}
+                style={{
+                  padding: '6px 16px',
+                  fontSize: '13px',
+                  fontWeight: '500',
+                  backgroundColor: batchSize === option ? '#111827' : '#f3f4f6',
+                  color: batchSize === option ? '#ffffff' : '#374151',
+                  border: batchSize === option ? '1px solid #111827' : '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                }}
+              >
+                {option.toLocaleString()}
+              </button>
+            ))}
+          </div>
+          {CURRENT_TIER === 'free' && (
+            <p style={{ fontSize: '11px', color: '#9ca3af', marginTop: '8px', marginBottom: '0' }}>
+              Upgrade to Pro to scan up to 500 at once.{' '}
+              <a href="/pricing" style={{ color: '#4f46e5', textDecoration: 'none', fontWeight: '500' }}>
+                See plans →
+              </a>
+            </p>
+          )}
         </div>
+      )}
+
+      {/* Progress indicator */}
+      {progress && (
+        <ScanProgress
+          stage={progress.stage}
+          message={progress.message}
+          percent={progress.percent}
+          progress={progress.progress}
+          total={progress.total}
+        />
+      )}
+
+      {/* Scan button */}
+      {!progress && (
+        <button
+          onClick={startScanAndClassify}
+          style={{
+            padding: '10px 24px',
+            backgroundColor: '#000000',
+            color: '#ffffff',
+            border: 'none',
+            borderRadius: '8px',
+            fontSize: '14px',
+            fontWeight: '500',
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
+          {classifyResult ? (
+            <><span style={{ fontSize: '14px' }}>↻</span> Rescan Emails</>
+          ) : (
+            <><span style={{ fontSize: '14px' }}>→</span> Scan & Clean</>
+          )}
+        </button>
       )}
     </div>
-  );
+
+    {/* Classification Results */}
+    {classifyResult && classifyResult.summary && (
+      <div className="bg-white rounded-xl border border-gray-200 p-8">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-lg font-semibold text-gray-900">Your Inbox Report</h2>
+        </div>
+        <p className="text-sm text-gray-400 mb-6">
+          Click any category to review the emails inside.
+        </p>
+
+        <div className="space-y-3">
+          {Object.entries(classifyResult.summary)
+            .sort((a, b) => {
+              const orderA = CATEGORY_ORDER.indexOf(a[0])
+              const orderB = CATEGORY_ORDER.indexOf(b[0])
+              const posA = orderA === -1 ? 8 : orderA
+              const posB = orderB === -1 ? 8 : orderB
+              return posA - posB
+            })
+            .map(([category, count]) => {
+              const config = CATEGORY_CONFIG[category] || { emoji: '📧', risk: 'yellow', riskLabel: 'Review' }
+              return (
+                <button
+                  key={category}
+                  onClick={() => onCategorySelect(category)}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '16px',
+                    borderRadius: '8px',
+                    border: '1px solid',
+                    cursor: 'pointer',
+                    marginBottom: '0',
+                    backgroundColor: RISK_BG[config.risk],
+                    borderColor: RISK_BORDER[config.risk],
+                    color: RISK_TEXT[config.risk],
+                  }}
+                >
+                  {/* Left side */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <span style={{ fontSize: '20px' }}>{config.emoji}</span>
+                    <div style={{ textAlign: 'left' }}>
+                      <p style={{ margin: '0', fontSize: '14px', fontWeight: '500' }}>{category}</p>
+                      <p style={{ margin: '0', fontSize: '12px', opacity: '0.7' }}>{config.riskLabel}</p>
+                    </div>
+                  </div>
+
+                  {/* Right side */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    {CATEGORY_SUGGESTIONS[category] && (
+                      <span style={{
+                        fontSize: '11px',
+                        fontWeight: '500',
+                        color: CATEGORY_SUGGESTIONS[category].color,
+                        backgroundColor: CATEGORY_SUGGESTIONS[category].bg,
+                        padding: '3px 10px',
+                        borderRadius: '999px',
+                        whiteSpace: 'nowrap',
+                        width: '120px',
+                        textAlign: 'center',
+                        display: 'inline-block',
+                        boxSizing: 'border-box',
+                      }}>
+                        Suggested: {CATEGORY_SUGGESTIONS[category].action}
+                      </span>
+                    )}
+                    <span style={{ fontWeight: '700', fontSize: '18px', minWidth: '32px', textAlign: 'right' }}>
+                      {count}
+                    </span>
+                    <span style={{ fontSize: '12px', opacity: '0.5' }}>→</span>
+                  </div>
+                </button>
+              )
+            })}
+        </div>
+      </div>
+    )}
+
+    {error && (
+      <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+        <p className="text-red-700 text-sm font-medium">Error: {error}</p>
+      </div>
+    )}
+
+  </div>
+)
 }
