@@ -4,7 +4,7 @@ import { useState } from "react";
 import CategorySummary from "./CategorySummary";
 import CategoryDetail from "./CategoryDetail";
 import StatsBar from './StatsBar' // add this import
-
+import MonitoringFeed from './MonitoringFeed'
 
 export default function DashboardClient() {
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -66,6 +66,7 @@ export default function DashboardClient() {
   return (
     <>
       <StatsBar refreshKey={statsRefreshKey} emailCount={emailCount}/>
+      <MonitoringFeed onStatsRefresh={refreshStats} />
       <div style={{ marginTop: '24px' }}>
         <CategorySummary
           onCategorySelect={setSelectedCategory}
