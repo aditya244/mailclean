@@ -56,7 +56,15 @@ export async function POST(request) {
     return Response.json({ success: true, affected: result })
 
   } catch (error) {
-    console.error('Group action error:', error)
+    logError(error, {
+      route: '/api/emails/group-action',
+      userId: session?.user?.id,
+      action,
+      domain,
+    })
+    if (error.code === 'GMAIL_AUTH_EXPIRED') {
+      return Response.json({ error: 'GMAIL_AUTH_EXPIRED', action: 'RECONNECT' }, { status: 401 })
+    }
     return Response.json({ error: error.message }, { status: 500 })
   }
 }

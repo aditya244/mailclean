@@ -124,10 +124,17 @@ export default function PricingPage() {
     <div style={{ minHeight: '100vh', backgroundColor: '#ffffff', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}>
 
       {/* Nav */}
-      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 40px', borderBottom: '1px solid #f3f4f6' }}>
+      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: "0 40px",
+          height: '64px', borderBottom: '1px solid #f3f4f6' }}>
         <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
-          <span style={{ fontSize: '20px' }}>📬</span>
-          <span style={{ fontWeight: '700', fontSize: '18px', color: '#111827' }}>Mailclean</span>
+          <img src="/app-icon-512.png" style={{ 
+            width: '108px', 
+            height: '108px', 
+            borderRadius: '10px',
+            objectFit: 'cover',
+            flexShrink: 0,
+          }}  alt="Sweepyr" />
+          <span style={{ fontWeight: '700', fontSize: '18px', color: '#111827' }}>Sweepyr</span>
         </a>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <a href="/" style={{ fontSize: '14px', color: '#6b7280', textDecoration: 'none' }}>Home</a>

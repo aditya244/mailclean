@@ -90,7 +90,15 @@ await Email.updateMany(
     })
 
   } catch (error) {
-    console.error('Action error:', error)
+    logError(error, {
+    route: '/api/emails/actions',
+    userId: session?.user?.id,
+    action,
+    category,
+  })
+  if (error.code === 'GMAIL_AUTH_EXPIRED') {
+    return Response.json({ error: 'GMAIL_AUTH_EXPIRED', action: 'RECONNECT' }, { status: 401 })
+  }
     return Response.json({ error: error.message }, { status: 500 })
   }
 }

@@ -114,6 +114,8 @@ export default function CategorySummary({
   setClassifyResult,
   error,
   setError,
+  onAuthError,
+  startScanRef
 }) {
   async function fetchEmailCount() {
     try {
@@ -126,6 +128,13 @@ export default function CategorySummary({
       setError(err.message);
     }
   }
+
+  // Register the scan function so parent can call it
+  useEffect(() => {
+    if (startScanRef) {
+      startScanRef.current = startScanAndClassify
+    }
+  }, [startScanRef])
 
   const [progress, setProgress] = useState(null);
   const batchOptions = TIER_BATCH_OPTIONS[CURRENT_TIER] || [100]
@@ -174,6 +183,11 @@ export default function CategorySummary({
       if (countData.error) throw new Error(countData.error);
       setEmailCount(countData.count);
 
+      if (countData.error === 'GMAIL_AUTH_EXPIRED') {
+        onAuthError()
+        return
+      }
+
       // Open SSE connection
       const url = `/api/gmail/process?batchSize=${batchSize}`;
       const eventSource = new EventSource(url);
@@ -200,6 +214,13 @@ export default function CategorySummary({
           return;
         }
 
+        if (data.error === 'GMAIL_AUTH_EXPIRED') {
+          onAuthError()
+          eventSource.close()
+          setProgress(null)
+          return
+        }
+        
         // Update progress
         setProgress({
           stage: data.stage,

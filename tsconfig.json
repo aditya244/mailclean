@@ -30,7 +30,7 @@
     "**/*.mts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "app/privacy/page.js"  ],
   "exclude": [
     "node_modules"
   ]

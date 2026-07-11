@@ -89,7 +89,13 @@ export async function POST() {
     })
 
   } catch (error) {
-    console.error('Classification error:', error)
+    console.error('Classification error:', error);
+    if (error.code === 'GMAIL_AUTH_EXPIRED') {
+      return Response.json(
+        { error: 'GMAIL_AUTH_EXPIRED', action: 'RECONNECT' },
+        { status: 401 }
+      )
+    }
     return Response.json({ error: error.message }, { status: 500 })
   }
 }

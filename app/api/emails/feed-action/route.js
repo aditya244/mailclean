@@ -53,7 +53,15 @@ export async function POST(request) {
     return Response.json({ success: true })
 
   } catch (error) {
-    console.error('Feed action error:', error)
+    logError(error, {
+    route: '/api/emails/feed-action',
+    userId: session?.user?.id,
+    action,
+    messageId,
+  })
+  if (error.code === 'GMAIL_AUTH_EXPIRED') {
+    return Response.json({ error: 'GMAIL_AUTH_EXPIRED', action: 'RECONNECT' }, { status: 401 })
+  }
     return Response.json({ error: error.message }, { status: 500 })
   }
 }
