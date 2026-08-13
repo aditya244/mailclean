@@ -18,7 +18,7 @@ export default withSentryConfig(nextConfig, {
 
   org: "project-idk",
 
-  project: "mailclean",
+  project: "sweepyr",
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,

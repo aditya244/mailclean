@@ -164,7 +164,13 @@ NEXT_PUBLIC_SENTRY_DSN     Client-side Sentry DSN (needs NEXT_PUBLIC_ prefix)
   `{BASE_URL}/api/auth/callback/google`. Currently in **Testing** mode, so only
   manually-added test users can sign in.
 - **MongoDB Atlas** — cluster with Network Access set to `0.0.0.0/0` for dev.
-  Production DB is `sweepyr` (was `mailclean`), staging should use a separate DB.
+  Production `MONGODB_URI` (set in Vercel) points at a database named
+  `sweepyr`. Local dev still points at the original `mailclean` database
+  (your own test data — untouched, just no longer what production uses).
+  Staging needs a third, separate database, e.g. `sweepyr-staging`.
+  MongoDB has no in-place database rename — this was done by pointing the
+  connection string's path segment at a new name and letting the app
+  auto-provision it on first write, not by migrating the old data.
 - **Google AI Studio** — API key with billing enabled (free tier quota is too
   low for real usage; hitting it silently degrades everything to `Uncertain`).
 
