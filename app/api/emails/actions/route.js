@@ -53,7 +53,7 @@ export async function POST(request) {
       result = await trashEmails(user.refreshToken, messageIds)
 
     } else if (action === 'label') {
-      const labelName = `CleanMail/${category}`
+      const labelName = `Sweepyr/${category}`
       const labelId = await getOrCreateLabel(user.refreshToken, labelName)
       result = await applyLabel(user.refreshToken, messageIds, labelId)
     }
@@ -64,7 +64,7 @@ export async function POST(request) {
       action,
       category,
       emailCount: result,
-      labelName: action === 'label' ? `CleanMail/${category}` : undefined,
+      labelName: action === 'label' ? `Sweepyr/${category}` : undefined,
       messageIds,
     })
 

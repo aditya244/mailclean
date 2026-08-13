@@ -4,6 +4,7 @@ import connectDB from '../../../../lib/mongoose'
 import User from '../../../../models/User'
 import Email from '../../../../models/Email'
 import { logError } from '../../../../lib/logger'
+import { getCleanupLimit, ensureFreshUsage } from '../../../../lib/tierLimits'
 
 export async function GET() {
   const session = await getServerSession(authOptions)
@@ -19,7 +20,12 @@ export async function GET() {
       return Response.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // Check if user has any processed emails
+    await ensureFreshUsage(user)
+    const tier = user.tier || 'free'
+    const limit = getCleanupLimit(tier)
+    const used = user.usage?.cleanupCount || 0
+
+    // Check if user has any processed exails
     const processedCount = await Email.countDocuments({
       userId: user._id,
       isProcessed: true,
@@ -34,7 +40,8 @@ export async function GET() {
       isNewUser: processedCount === 0,
       hasScanned: totalCount > 0,
       hasClassified: processedCount > 0,
-      tier: user.tier || 'free',
+      tier,
+      usage: { used, limit, remaining: Math.max(0, limit - used) },
       memberSince: user.createdAt,
     })
 

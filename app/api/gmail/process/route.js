@@ -6,13 +6,7 @@ import Email from "../../../../models/Email";
 import { getMessageIds, getEmailMetadata } from "../../../../lib/gmail";
 import { classifyEmail } from "../../../../lib/classifier/index";
 import { logError, logInfo } from '../../../../lib/logger';
-
-const TIER_LIMITS = {
-  free: 100,
-  pro: 500,
-  annual: 1000,
-  deepclean: 5000,
-};
+import { getCleanupLimit, ensureFreshUsage } from '../../../../lib/tierLimits';
 
 export async function GET(request) {
   console.log("=== SSE route hit ===");
@@ -61,9 +55,25 @@ export async function GET(request) {
         return;
       }
 
+      await ensureFreshUsage(user);
+
       const userTier = user.tier || "free";
-      const maxAllowed = TIER_LIMITS[userTier] || 100;
-      const batchSize = Math.min(requestedSize, maxAllowed);
+      const cleanupLimit = getCleanupLimit(userTier);
+      const alreadyUsed = user.usage.cleanupCount || 0;
+      const remaining = Math.max(0, cleanupLimit - alreadyUsed);
+
+      if (remaining <= 0) {
+        send({
+          error: "USAGE_LIMIT_REACHED",
+          message: `You've used all ${cleanupLimit} emails included in your ${userTier} plan this month.`,
+          limit: cleanupLimit,
+          used: alreadyUsed,
+        });
+        controller.close();
+        return;
+      }
+
+      const batchSize = Math.min(requestedSize, remaining);
 
       // ── Stage 1: Fetch message IDs ──────────────────────────
       send({
@@ -130,6 +140,11 @@ export async function GET(request) {
         progress: total,
         total,
       });
+
+      // Meter usage against the monthly cleanup limit — counts emails
+      // actually fetched this request, not just the requested batch size
+      user.usage.cleanupCount = alreadyUsed + emails.length;
+      await user.save();
 
       // ── Stage 3: Classify emails ────────────────────────────
       // Fetch unprocessed emails from DB

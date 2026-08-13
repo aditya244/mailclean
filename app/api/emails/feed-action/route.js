@@ -31,7 +31,7 @@ export async function POST(request) {
     } else if (action === 'trash') {
       await trashEmails(user.refreshToken, [messageId])
     } else if (action === 'label') {
-      const labelId = await getOrCreateLabel(user.refreshToken, `CleanMail/${category}`)
+      const labelId = await getOrCreateLabel(user.refreshToken, `Sweepyr/${category}`)
       await applyLabel(user.refreshToken, [messageId], labelId)
     }
 
