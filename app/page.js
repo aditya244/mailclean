@@ -53,19 +53,19 @@ export default function LandingPage() {
           alignItems: "center",
           justifyContent: "space-between",
           padding: "0 40px",
-          height: '64px',
+          height: '72px',
           borderBottom: "1px solid #f3f4f6",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <img src="/app-icon-512.png" style={{ 
-            width: '108px', 
-            height: '108px', 
+            width: '64px', 
+            height: '64px', 
             borderRadius: '10px',
             objectFit: 'cover',
             flexShrink: 0,
-          }}  alt="Sweepyr" />
-          <span style={{ fontWeight: '700', fontSize: '18px', color: '#111827' }}>Sweepyr</span>
+          }} alt="Sweepyr" />
+          <span style={{ fontWeight: '700', fontSize: '20px', color: '#111827' }}>Sweepyr</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
           <a
@@ -110,8 +110,8 @@ export default function LandingPage() {
             display: "inline-flex",
             alignItems: "center",
             gap: "6px",
-            backgroundColor: "#eef2ff",
-            color: "#4338ca",
+            backgroundColor: "#f0fdfa",
+            color: "#0f766e",
             fontSize: "12px",
             fontWeight: "500",
             padding: "6px 14px",
@@ -135,7 +135,7 @@ export default function LandingPage() {
         >
           Clean your inbox.
           <br />
-          <span style={{ color: "#4f46e5" }}>Without the anxiety.</span>
+          <span style={{ color: "#0d9488" }}>Without the anxiety.</span>
         </h1>
 
         <p
@@ -147,7 +147,7 @@ export default function LandingPage() {
             marginTop: "0",
           }}
         >
-          Mailclean scans your Gmail, sorts thousands of emails into smart
+          Sweepyr scans your Gmail, sorts thousands of emails into smart
           categories, and helps you archive or delete clutter — in minutes, not
           hours.
         </p>
@@ -262,7 +262,7 @@ export default function LandingPage() {
                   style={{
                     fontSize: "11px",
                     fontWeight: "700",
-                    color: "#a5b4fc",
+                    color: "#5eead4",
                     letterSpacing: "0.08em",
                     marginBottom: "8px",
                     marginTop: "0",
@@ -623,7 +623,7 @@ export default function LandingPage() {
       >
         <div
           style={{
-            backgroundColor: "#eef2ff",
+            backgroundColor: "#f0fdfa",
             borderRadius: "20px",
             padding: "48px",
             textAlign: "center",
@@ -654,7 +654,7 @@ export default function LandingPage() {
               margin: "0 auto 32px",
             }}
           >
-            Mailclean only reads sender addresses, subject lines and email
+            Sweepyr only reads sender addresses, subject lines and email
             headers. We never access the content of your emails. This is
             enforced at the API level — not just a policy promise.
           </p>
@@ -682,7 +682,7 @@ export default function LandingPage() {
                   fontWeight: "500",
                 }}
               >
-                <span style={{ color: "#4f46e5" }}>✓</span>
+                <span style={{ color: "#0d9488" }}>✓</span>
                 {item}
               </div>
             ))}
@@ -754,7 +754,7 @@ export default function LandingPage() {
                 style={{
                   fontSize: "11px",
                   fontWeight: "600",
-                  color: i === 2 ? "#a5b4fc" : "#6b7280",
+                  color: i === 2 ? "#5eead4" : "#6b7280",
                   marginBottom: "4px",
                 }}
               >
@@ -788,7 +788,7 @@ export default function LandingPage() {
             alignItems: "center",
             gap: "6px",
             padding: "14px 32px",
-            backgroundColor: "#4f46e5",
+            backgroundColor: "#0d9488",
             color: "#fff",
             borderRadius: "10px",
             fontSize: "15px",
@@ -823,7 +823,7 @@ export default function LandingPage() {
       >
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <span>📬</span>
-          <span style={{ fontWeight: "700", color: "#111827" }}>Mailclean</span>
+          <span style={{ fontWeight: "700", color: "#111827" }}>Sweepyr</span>
         </div>
         <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
           <a

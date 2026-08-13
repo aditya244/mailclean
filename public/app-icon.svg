@@ -10,7 +10,6 @@
       <stop offset="0" stop-color="#17b8a9"></stop><stop offset="1" stop-color="#0d867b"></stop>
     </linearGradient>
   </defs>
-  <rect width="512" height="512" rx="120" fill="#fff"></rect>
   <g transform="translate(76,132) scale(1.2)">
     <path d="M40 78 H74" stroke="url(#t-env)" stroke-width="8" stroke-linecap="round"></path>
     <path d="M30 98 H70" stroke="url(#t-env)" stroke-width="8" stroke-linecap="round" opacity="0.75"></path>

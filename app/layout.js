@@ -2,6 +2,10 @@ import './globals.css'
 import Providers from './Providers'
 
 export const metadata = {
+  // Derived from NEXTAUTH_URL (already set per-environment) rather than a
+  // literal domain, so OG/social image resolution is correct on staging and
+  // localhost too, not just production.
+  metadataBase: new URL(process.env.NEXTAUTH_URL || 'https://sweepyr.com'),
   title: 'Sweepyr — Clean your inbox',
   description: 'Privacy-first Gmail inbox cleanup. Sort, archive and delete email clutter without us ever reading your emails.',
   icons: {

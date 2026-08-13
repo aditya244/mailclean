@@ -14,18 +14,18 @@ export default function TermsOfService() {
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: "0 40px",
-        height: '64px',
+        height: '72px',
         borderBottom: '1px solid #f3f4f6',
       }}>
         <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
           <img src="/app-icon-512.png" style={{ 
-            width: '108px', 
-            height: '108px', 
+            width: '64px', 
+            height: '64px', 
             borderRadius: '10px',
             objectFit: 'cover',
             flexShrink: 0,
-          }}  alt="Sweepyr" />
-          <span style={{ fontWeight: '700', fontSize: '18px', color: '#111827' }}>Sweepyr</span>
+          }} alt="Sweepyr" />
+          <span style={{ fontWeight: '700', fontSize: '20px', color: '#111827' }}>Sweepyr</span>
         </a>
         <div style={{ display: 'flex', gap: '24px' }}>
           <a href="/" style={{ fontSize: '14px', color: '#6b7280', textDecoration: 'none' }}>Home</a>
@@ -46,13 +46,13 @@ export default function TermsOfService() {
         {[
           {
             title: '1. Acceptance of Terms',
-            content: `By accessing or using Mailclean ("the Service"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Service.
+            content: `By accessing or using Sweepyr ("the Service"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Service.
 
-Mailclean is a personal project operated by an individual developer based in India. These terms govern your use of the Service available at mailclean.vercel.app.`,
+Sweepyr is a personal project operated by an individual developer based in India. These terms govern your use of the Service available at sweepyr.com.`,
           },
           {
             title: '2. Description of Service',
-            content: `Mailclean is a Gmail inbox management tool that:
+            content: `Sweepyr is a Gmail inbox management tool that:
 
 - Connects to your Gmail account via Google OAuth
 - Fetches email metadata (sender, subject, headers) — never email body content
@@ -64,11 +64,11 @@ The Service is provided "as is" and may be updated, modified, or discontinued at
           },
           {
             title: '3. Google Account Access',
-            content: `To use Mailclean, you must sign in with a Google account and grant us permission to access your Gmail. By doing so, you:
+            content: `To use Sweepyr, you must sign in with a Google account and grant us permission to access your Gmail. By doing so, you:
 
-- Authorize Mailclean to read email metadata from your Gmail inbox
-- Authorize Mailclean to create and apply labels in your Gmail
-- Authorize Mailclean to archive emails and move emails to Trash on your instruction
+- Authorize Sweepyr to read email metadata from your Gmail inbox
+- Authorize Sweepyr to create and apply labels in your Gmail
+- Authorize Sweepyr to archive emails and move emails to Trash on your instruction
 - Confirm that you own or have authority to manage the Gmail account you connect
 
 You can revoke this access at any time by visiting myaccount.google.com/permissions.`,
@@ -78,7 +78,7 @@ You can revoke this access at any time by visiting myaccount.google.com/permissi
             content: `You are responsible for:
 
 - Maintaining the security of your Google account
-- All actions taken within Mailclean using your account
+- All actions taken within Sweepyr using your account
 - Reviewing emails before taking bulk actions such as archiving or trashing
 - Understanding that moving emails to Trash in Gmail results in permanent deletion after 30 days
 
@@ -91,7 +91,7 @@ You agree not to:
           },
           {
             title: '5. Free and Paid Plans',
-            content: `Mailclean offers both free and paid plans:
+            content: `Sweepyr offers both free and paid plans:
 
 Free Plan: Limited to 100 emails cleanup and 100 emails monitoring per month at no cost.
 
@@ -120,7 +120,7 @@ Email classification is automated and may not always be accurate. You are respon
           },
           {
             title: '8. Limitation of Liability',
-            content: `To the maximum extent permitted by applicable law, Mailclean and its developer shall not be liable for:
+            content: `To the maximum extent permitted by applicable law, Sweepyr and its developer shall not be liable for:
 
 - Any loss of data, including emails that are permanently deleted through use of the Service
 - Any indirect, incidental, or consequential damages arising from your use of the Service
@@ -130,7 +130,7 @@ Your sole remedy for dissatisfaction with the Service is to stop using it and re
           },
           {
             title: '9. Intellectual Property',
-            content: `The Mailclean name, logo, and all content on the Service are owned by the developer and protected by applicable intellectual property laws. You may not copy, modify, or distribute any part of the Service without explicit written permission.
+            content: `The Sweepyr name, logo, and all content on the Service are owned by the developer and protected by applicable intellectual property laws. You may not copy, modify, or distribute any part of the Service without explicit written permission.
 
 Your data remains yours. We claim no ownership over your emails, email metadata, or any content from your Gmail account.`,
           },
@@ -138,7 +138,7 @@ Your data remains yours. We claim no ownership over your emails, email metadata,
             title: '10. Termination',
             content: `We reserve the right to suspend or terminate your access to the Service at any time, for any reason, including violation of these Terms.
 
-You may stop using the Service at any time by revoking Mailclean's access to your Google account at myaccount.google.com/permissions and requesting deletion of your data by contacting us.
+You may stop using the Service at any time by revoking Sweepyr's access to your Google account at myaccount.google.com/permissions and requesting deletion of your data by contacting us.
 
 Upon termination, all data associated with your account will be deleted within 30 days.`,
           },
@@ -156,7 +156,7 @@ These Terms are subject to the Information Technology Act, 2000 and the Digital 
             title: '13. Contact',
             content: `If you have any questions about these Terms, please contact:
 
-Mailclean
+Sweepyr
 Email: your-email@gmail.com
 Location: India`,
           },
@@ -193,7 +193,7 @@ Location: India`,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span>📬</span>
-          <span style={{ fontWeight: '700', color: '#111827' }}>Mailclean</span>
+          <span style={{ fontWeight: '700', color: '#111827' }}>Sweepyr</span>
         </div>
         <div style={{ display: 'flex', gap: '24px' }}>
           <a href="/privacy" style={{ fontSize: '12px', color: '#9ca3af', textDecoration: 'none' }}>Privacy Policy</a>

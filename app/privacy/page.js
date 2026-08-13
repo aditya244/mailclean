@@ -14,18 +14,18 @@ export default function PrivacyPolicy() {
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: "0 40px",
-        height: '64px',
+        height: '72px',
         borderBottom: '1px solid #f3f4f6',
       }}>
         <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
           <img src="/app-icon-512.png" style={{ 
-            width: '108px', 
-            height: '108px', 
+            width: '64px', 
+            height: '64px', 
             borderRadius: '10px',
             objectFit: 'cover',
             flexShrink: 0,
-          }}  alt="Sweepyr" />
-          <span style={{ fontWeight: '700', fontSize: '18px', color: '#111827' }}>Sweepyr</span>
+          }} alt="Sweepyr" />
+          <span style={{ fontWeight: '700', fontSize: '20px', color: '#111827' }}>Sweepyr</span>
         </a>
         <div style={{ display: 'flex', gap: '24px' }}>
           <a href="/" style={{ fontSize: '14px', color: '#6b7280', textDecoration: 'none' }}>Home</a>
@@ -46,9 +46,9 @@ export default function PrivacyPolicy() {
         {[
           {
             title: '1. Introduction',
-            content: `Mailclean ("we", "our", or "us") is a personal project operated by an individual developer based in India. This Privacy Policy explains how we collect, use, and protect your information when you use Mailclean at mailclean.vercel.app (the "Service").
+            content: `Sweepyr ("we", "our", or "us") is a personal project operated by an individual developer based in India. This Privacy Policy explains how we collect, use, and protect your information when you use Sweepyr at sweepyr.com (the "Service").
 
-By using Mailclean, you agree to the collection and use of information in accordance with this policy. If you do not agree, please do not use the Service.`,
+By using Sweepyr, you agree to the collection and use of information in accordance with this policy. If you do not agree, please do not use the Service.`,
           },
           {
             title: '2. What We Collect',
@@ -67,7 +67,7 @@ We do NOT collect or store:
           },
           {
             title: '3. How We Use Your Information',
-            content: `We use the information we collect solely to provide the Mailclean service:
+            content: `We use the information we collect solely to provide the Sweepyr service:
 
 - Your name and email are used to identify your account
 - Your refresh token is used to call the Gmail API on your behalf — to fetch email metadata, apply labels, archive emails, and move emails to Trash
@@ -78,7 +78,7 @@ We do not use your information for advertising, analytics sold to third parties,
           },
           {
             title: '4. How We Access Your Gmail',
-            content: `Mailclean connects to your Gmail account using Google's official OAuth 2.0 protocol. We request the following Gmail permissions:
+            content: `Sweepyr connects to your Gmail account using Google's official OAuth 2.0 protocol. We request the following Gmail permissions:
 
 - gmail.readonly — to read email metadata (sender, subject, headers)
 - gmail.labels — to create and manage labels in your inbox
@@ -97,7 +97,7 @@ All actions taken on your Gmail (archiving, labelling, trashing) require your ex
 - Email metadata (sender, subject, date, headers — never body content)
 - Classification results and action history
 
-Your refresh token is stored to enable background processing. We recommend revoking access via your Google Account settings if you stop using Mailclean.`,
+Your refresh token is stored to enable background processing. We recommend revoking access via your Google Account settings if you stop using Sweepyr.`,
           },
           {
             title: '6. Data Sharing',
@@ -112,14 +112,14 @@ No other third parties receive your data.`,
           },
           {
             title: '7. Data Retention',
-            content: `We retain your data for as long as you have an active account with Mailclean. You may request deletion of your account and all associated data at any time by contacting us at the email address below.
+            content: `We retain your data for as long as you have an active account with Sweepyr. You may request deletion of your account and all associated data at any time by contacting us at the email address below.
 
 Upon deletion:
 - Your account record is removed from our database
 - All stored email metadata is deleted
 - Your refresh token is deleted, revoking our access to your Gmail
 
-You can also revoke Mailclean's access to your Google account at any time by visiting myaccount.google.com/permissions and removing Mailclean from the list of connected apps.`,
+You can also revoke Sweepyr's access to your Google account at any time by visiting myaccount.google.com/permissions and removing Sweepyr from the list of connected apps.`,
           },
           {
             title: '8. Your Rights Under Indian Law',
@@ -146,7 +146,7 @@ No method of transmission over the internet is 100% secure. While we strive to p
           },
           {
             title: '10. Children\'s Privacy',
-            content: `Mailclean is not intended for use by anyone under the age of 13. We do not knowingly collect personal data from children. If you believe a child has provided us with personal data, please contact us and we will delete it promptly.`,
+            content: `Sweepyr is not intended for use by anyone under the age of 13. We do not knowingly collect personal data from children. If you believe a child has provided us with personal data, please contact us and we will delete it promptly.`,
           },
           {
             title: '11. Changes to This Policy',
@@ -156,7 +156,7 @@ No method of transmission over the internet is 100% secure. While we strive to p
             title: '12. Contact',
             content: `If you have any questions about this Privacy Policy or want to exercise your data rights, please contact:
 
-Mailclean
+Sweepyr
 Email: your-email@gmail.com
 Location: India
 
@@ -195,7 +195,7 @@ We will respond to all inquiries within 30 days.`,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span>📬</span>
-          <span style={{ fontWeight: '700', color: '#111827' }}>Mailclean</span>
+          <span style={{ fontWeight: '700', color: '#111827' }}>Sweepyr</span>
         </div>
         <div style={{ display: 'flex', gap: '24px' }}>
           <a href="/privacy" style={{ fontSize: '12px', color: '#9ca3af', textDecoration: 'none' }}>Privacy Policy</a>
