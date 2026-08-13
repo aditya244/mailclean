@@ -174,8 +174,8 @@ export default function MonitoringFeed({ onStatsRefresh }) {
             <span style={{
               fontSize: '11px',
               fontWeight: '600',
-              color: '#4f46e5',
-              backgroundColor: '#eef2ff',
+              color: '#0d9488',
+              backgroundColor: '#f0fdfa',
               padding: '2px 8px',
               borderRadius: '999px',
             }}>
@@ -194,7 +194,7 @@ export default function MonitoringFeed({ onStatsRefresh }) {
           <div style={{
             width: '20px', height: '20px',
             border: '2px solid #e5e7eb',
-            borderTopColor: '#4f46e5',
+            borderTopColor: '#0d9488',
             borderRadius: '50%',
             animation: 'spin 0.8s linear infinite',
             margin: '0 auto 12px',
@@ -266,8 +266,8 @@ export default function MonitoringFeed({ onStatsRefresh }) {
                   <div style={{ flexShrink: 0 }}>
                     <span style={{
                       fontSize: '11px',
-                      color: '#4f46e5',
-                      backgroundColor: '#eef2ff',
+                      color: '#0d9488',
+                      backgroundColor: '#f0fdfa',
                       padding: '3px 8px',
                       borderRadius: '999px',
                       whiteSpace: 'nowrap',
@@ -285,12 +285,13 @@ export default function MonitoringFeed({ onStatsRefresh }) {
                       <span style={{ fontSize: '11px', color: '#9ca3af' }}>...</span>
                     ) : (
                       <>
-                        {/* Move to category dropdown */}
+                        {/* Reclassify dropdown */}
                         <select
                           defaultValue=""
                           onChange={e => {
                             if (e.target.value) handleMove(email, e.target.value)
                           }}
+                          title="Changes how Sweepyr sorts this email. Nothing changes in Gmail."
                           style={{
                             fontSize: '11px',
                             border: '1px solid #e5e7eb',
@@ -301,7 +302,7 @@ export default function MonitoringFeed({ onStatsRefresh }) {
                             cursor: 'pointer',
                           }}
                         >
-                          <option value="" disabled>Move</option>
+                          <option value="" disabled>Reclassify</option>
                           {ALL_CATEGORIES.filter(c => c !== email.category).map(c => (
                             <option key={c} value={c}>{c}</option>
                           ))}
@@ -310,15 +311,15 @@ export default function MonitoringFeed({ onStatsRefresh }) {
                         {/* Label */}
                         <button
                           onClick={() => handleAction('label', email)}
-                          title="Label"
+                          title={`Adds a Sweepyr/${email.category || 'Uncategorised'} label in Gmail. Emails stay in your inbox.`}
                           style={{
                             padding: '4px 8px',
                             fontSize: '12px',
-                            backgroundColor: '#eef2ff',
-                            border: '1px solid #a5b4fc',
+                            backgroundColor: '#f0fdfa',
+                            border: '1px solid #5eead4',
                             borderRadius: '6px',
                             cursor: 'pointer',
-                            color: '#4338ca',
+                            color: '#0f766e',
                           }}
                         >
                           🏷️
@@ -327,7 +328,7 @@ export default function MonitoringFeed({ onStatsRefresh }) {
                         {/* Archive */}
                         <button
                           onClick={() => handleAction('archive', email)}
-                          title="Archive"
+                          title="Removes from inbox, keeps in All Mail. Findable anytime via search."
                           style={{
                             padding: '4px 8px',
                             fontSize: '12px',
@@ -344,7 +345,7 @@ export default function MonitoringFeed({ onStatsRefresh }) {
                         {/* Trash */}
                         <button
                           onClick={() => handleAction('trash', email)}
-                          title="Trash"
+                          title="Moves to Gmail Trash. Recoverable for 30 days."
                           style={{
                             padding: '4px 8px',
                             fontSize: '12px',
@@ -379,7 +380,7 @@ export default function MonitoringFeed({ onStatsRefresh }) {
                   {hiddenCount} older emails are not shown.
                 </span>{' '}
                 Run{' '}
-                <span style={{ color: '#4f46e5', fontWeight: '500', cursor: 'pointer' }}>
+                <span style={{ color: '#0d9488', fontWeight: '500', cursor: 'pointer' }}>
                   Scan & Clean
                 </span>{' '}
                 to classify and review all of them in your inbox report.
@@ -393,7 +394,7 @@ export default function MonitoringFeed({ onStatsRefresh }) {
                   background: 'none',
                   border: 'none',
                   fontSize: '12px',
-                  color: loadingMore ? '#9ca3af' : '#4f46e5',
+                  color: loadingMore ? '#9ca3af' : '#0d9488',
                   cursor: loadingMore ? 'not-allowed' : 'pointer',
                   padding: '0',
                   fontWeight: '500',

@@ -54,9 +54,9 @@ export default function ConfirmModal({
     },
     label: {
       title: "Apply Label",
-      description: `${count} emails from "${category}" will be labelled "CleanMail/${category}" in Gmail. No emails will be moved or deleted.`,
+      description: null,
       confirmLabel: "Apply Label",
-      confirmColor: "#4f46e5",
+      confirmColor: "#0d9488",
     },
   };
 
@@ -107,17 +107,56 @@ export default function ConfirmModal({
         </h3>
 
         {/* Description */}
-        <p
-          style={{
-            fontSize: "14px",
-            color: "#6b7280",
-            lineHeight: "1.6",
-            marginBottom: "20px",
-            marginTop: "0",
-          }}
-        >
-          {config.description}
-        </p>
+        {action === "label" ? (
+          <div style={{ marginBottom: "20px" }}>
+            <p
+              style={{
+                fontSize: "14px",
+                color: "#6b7280",
+                lineHeight: "1.6",
+                margin: "0 0 12px 0",
+              }}
+            >
+              {count} emails will be labelled in Gmail. Nothing will be moved or
+              deleted.
+            </p>
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "8px 14px",
+                backgroundColor: "#f0fdfa",
+                border: "1px solid #99f6e4",
+                borderRadius: "8px",
+              }}
+            >
+              <span style={{ fontSize: "14px" }}>🏷️</span>
+              <code
+                style={{
+                  fontSize: "13px",
+                  fontWeight: "600",
+                  color: "#0f766e",
+                  fontFamily: "monospace",
+                }}
+              >
+                Sweepyr/{category}
+              </code>
+            </div>
+          </div>
+        ) : (
+          <p
+            style={{
+              fontSize: "14px",
+              color: "#6b7280",
+              lineHeight: "1.6",
+              marginBottom: "20px",
+              marginTop: "0",
+            }}
+          >
+            {config.description}
+          </p>
+        )}
 
         {/* Info box */}
         <div
@@ -169,6 +208,8 @@ export default function ConfirmModal({
                 boxSizing: "border-box",
                 fontFamily: "monospace",
                 letterSpacing: "2px",
+                color: "#111827",
+                backgroundColor: "#ffffff",
               }}
             />
           </div>

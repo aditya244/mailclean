@@ -23,20 +23,25 @@ export default function DashboardClient({ userName }) {
   const [showReconnectBanner, setShowReconnectBanner] = useState(false);
   const [isNewUser, setIsNewUser] = useState(false)
   const [userStatusLoaded, setUserStatusLoaded] = useState(false)
+  const [tier, setTier] = useState('free')
+  const [usage, setUsage] = useState(null)
   const startScanRef = useRef(null);
 
-  useEffect(() => {
-    async function checkUserStatus() {
-      try {
-        const res = await fetch('/api/user/status')
-        const data = await res.json()
-        if (data.isNewUser) setIsNewUser(true)
-      } catch (err) {
-        console.error('Error checking user status:', err)
-      } finally {
-        setUserStatusLoaded(true)
-      }
+  async function checkUserStatus() {
+    try {
+      const res = await fetch('/api/user/status')
+      const data = await res.json()
+      if (data.isNewUser) setIsNewUser(true)
+      if (data.tier) setTier(data.tier)
+      if (data.usage) setUsage(data.usage)
+    } catch (err) {
+      console.error('Error checking user status:', err)
+    } finally {
+      setUserStatusLoaded(true)
     }
+  }
+
+  useEffect(() => {
     checkUserStatus()
   }, [])
 
@@ -51,6 +56,16 @@ export default function DashboardClient({ userName }) {
       delete newSummary[category];
       return { ...prev, summary: newSummary };
     });
+  }
+
+  async function refreshEmailCount() {
+    try {
+      const res = await fetch('/api/gmail/count')
+      const data = await res.json()
+      if (data.count) setEmailCount(data.count)
+    } catch (err) {
+      console.error('Error refreshing count:', err)
+    }
   }
 
   function handleApiResponse(data) {
@@ -90,6 +105,7 @@ export default function DashboardClient({ userName }) {
           onCategoryOverride={handleCategoryOverride}
           onActionComplete={handleActionComplete}
           onStatsRefresh={refreshStats}
+          onCountRefresh={refreshEmailCount}
         />
         {showReconnectBanner && (
           <ReconnectBanner onDismiss={() => setShowReconnectBanner(false)} />
@@ -141,6 +157,9 @@ export default function DashboardClient({ userName }) {
           setError={setError}
           onAuthError={() => setShowReconnectBanner(true)}
           startScanRef={startScanRef}
+          tier={tier}
+          usage={usage}
+          onUsageRefresh={checkUserStatus}
         />
       </div>
     )}

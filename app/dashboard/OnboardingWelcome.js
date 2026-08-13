@@ -42,7 +42,7 @@ export default function OnboardingWelcome({ userName, onStartScan }) {
         right: 0,
         width: '300px',
         height: '300px',
-        backgroundColor: '#eef2ff',
+        backgroundColor: '#f0fdfa',
         borderRadius: '50%',
         transform: 'translate(100px, -150px)',
         zIndex: 0,
@@ -59,7 +59,7 @@ export default function OnboardingWelcome({ userName, onStartScan }) {
             color: '#111827',
             margin: '0 0 8px 0',
           }}>
-            Welcome to Mailclean, {firstName}!
+            Welcome to Sweepyr, {firstName}!
           </h2>
           <p style={{
             fontSize: '15px',
@@ -96,7 +96,7 @@ export default function OnboardingWelcome({ userName, onStartScan }) {
                 fontSize: '14px',
                 fontWeight: '700',
                 backgroundColor:
-                  step.status === 'done' ? '#4f46e5' :
+                  step.status === 'done' ? '#0d9488' :
                   step.status === 'current' ? '#111827' : '#f3f4f6',
                 color:
                   step.status === 'done' ? '#ffffff' :
@@ -114,7 +114,7 @@ export default function OnboardingWelcome({ userName, onStartScan }) {
                   fontSize: '14px',
                   fontWeight: '600',
                   color:
-                    step.status === 'done' ? '#4f46e5' :
+                    step.status === 'done' ? '#0d9488' :
                     step.status === 'current' ? '#111827' : '#9ca3af',
                 }}>
                   {step.status === 'done' && '✓ '}{step.label}
