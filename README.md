@@ -796,6 +796,16 @@ that field. Caps the feed at 50 (`MAX_FEED`) with 10 per page, and returns
 Aggregates `ActionHistory` by action type to produce
 `{ trashed, archived, labelled, totalCleaned, totalSorted }`.
 
+#### `app/api/version/route.js` — `GET`
+Public, no session guard — the point is to be `curl`-able without signing in.
+Returns `{ version, commitSha, branch, environment, commitMessage }` sourced
+from Vercel's auto-injected git env vars (`VERCEL_GIT_COMMIT_SHA`,
+`VERCEL_GIT_COMMIT_REF`, `VERCEL_ENV`). Fastest way to confirm what's actually
+live on a given environment without opening the Vercel dashboard. The same
+values are also re-exposed client-side as `NEXT_PUBLIC_*` vars (see
+`next.config.mjs`) and logged to the browser console on load
+(`app/Providers.js`) and the server console at cold start (`instrumentation.ts`).
+
 #### `app/api/user/status/route.js` — `GET`
 Counts processed emails for the user. `isNewUser: processedCount === 0` drives
 whether the onboarding card renders. Also calls `ensureFreshUsage()` and

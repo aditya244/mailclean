@@ -1,7 +1,16 @@
 import { withSentryConfig } from '@sentry/nextjs';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
+  // Re-expose Vercel's auto-injected git metadata under NEXT_PUBLIC_ so it's
+  // readable client-side too, not just in server code. This is the version
+  // indicator - tied to the exact commit, updates automatically on every
+  // build, never needs a manual bump. Falls back to 'local' values when
+  // running outside Vercel (e.g. `npm run dev`).
+  env: {
+    NEXT_PUBLIC_APP_VERSION: (process.env.VERCEL_GIT_COMMIT_SHA || 'local-dev').slice(0, 7),
+    NEXT_PUBLIC_GIT_BRANCH: process.env.VERCEL_GIT_COMMIT_REF || 'local',
+    NEXT_PUBLIC_APP_ENV: process.env.VERCEL_ENV || 'development',
+  },
   images: {
     remotePatterns: [
       {

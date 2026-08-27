@@ -22,6 +22,29 @@
 
 ## Shipped
 
+### Build/deploy versioning
+- **Shipped:** 2026-08-10
+- **What it is:** Every deployment now exposes what commit, branch, and
+  environment (production/preview/development) is actually running —
+  in the browser console, the server console/logs, and a public
+  `/api/version` endpoint you can `curl` directly.
+- **Why:** Directly motivated by the earlier confusion where `main` had
+  silently not been updated despite believing it had — a version check
+  would have caught that in seconds instead of a multi-step debugging
+  detour. Uses Vercel's auto-injected git metadata
+  (`VERCEL_GIT_COMMIT_SHA`, `VERCEL_GIT_COMMIT_REF`, `VERCEL_ENV`) rather
+  than a manually-bumped version number, since that can't go stale or be
+  forgotten — it's tied to the exact commit automatically, every build.
+- **Impacted pages (test these):** Open browser devtools console on any
+  page — should log a "Sweepyr — {env} · {branch} · {short SHA}" banner
+  on load. `curl https://sweepyr.com/api/version` (and the staging
+  equivalent) should return matching JSON. Vercel's function logs should
+  show the same info once at cold start.
+- **Before:** No way to tell what was actually deployed without checking
+  Vercel's dashboard directly.
+- **After:** A 5-second check from anywhere — browser console, curl, or
+  server logs — confirms exactly what's live on any environment.
+
 ### Fix: sender-group actions bypassed the confirmation modal entirely
 - **Shipped:** 2026-08-10
 - **What it is:** Found during staging regression testing — trashing (or
