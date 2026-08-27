@@ -1,4 +1,11 @@
 import { withSentryConfig } from '@sentry/nextjs';
+import { createRequire } from 'module';
+
+// createRequire rather than a JSON import-attribute, for reliable ESM JSON
+// loading across Node versions in this plain .mjs config file.
+const require = createRequire(import.meta.url);
+const { version: packageVersion } = require('./package.json');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Re-expose Vercel's auto-injected git metadata under NEXT_PUBLIC_ so it's
@@ -6,12 +13,16 @@ const nextConfig = {
   // indicator - tied to the exact commit, updates automatically on every
   // build, never needs a manual bump. Falls back to 'local' values when
   // running outside Vercel (e.g. `npm run dev`).
+  // NEXT_PUBLIC_APP_VERSION_NUMBER is the one human-readable piece - bump it
+  // in package.json's "version" field whenever you want to mark a release,
+  // separate from the auto-updating git-based identifiers above.
   env: {
     NEXT_PUBLIC_APP_VERSION: process.env.VERCEL_GIT_COMMIT_SHA
       ? process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7)
       : 'local-dev',
     NEXT_PUBLIC_GIT_BRANCH: process.env.VERCEL_GIT_COMMIT_REF || 'local',
     NEXT_PUBLIC_APP_ENV: process.env.VERCEL_ENV || 'development',
+    NEXT_PUBLIC_APP_VERSION_NUMBER: packageVersion,
   },
   images: {
     remotePatterns: [
