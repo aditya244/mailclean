@@ -3,7 +3,9 @@
 // actually live. No secrets exposed - just git metadata.
 export async function GET() {
   return Response.json({
-    version: (process.env.VERCEL_GIT_COMMIT_SHA || 'local-dev').slice(0, 7),
+    version: process.env.VERCEL_GIT_COMMIT_SHA
+      ? process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7)
+      : 'local-dev',
     commitSha: process.env.VERCEL_GIT_COMMIT_SHA || null,
     branch: process.env.VERCEL_GIT_COMMIT_REF || 'local',
     environment: process.env.VERCEL_ENV || 'development',

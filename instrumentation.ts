@@ -2,7 +2,7 @@ import * as Sentry from "@sentry/nextjs";
 
 export async function register() {
   console.log(
-    `[Sweepyr] ${process.env.VERCEL_ENV || "development"} · ${process.env.VERCEL_GIT_COMMIT_REF || "local"} · ${(process.env.VERCEL_GIT_COMMIT_SHA || "local-dev").slice(0, 7)}`
+    `[Sweepyr] ${process.env.VERCEL_ENV || "development"} · ${process.env.VERCEL_GIT_COMMIT_REF || "local"} · ${process.env.VERCEL_GIT_COMMIT_SHA ? process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7) : "local-dev"}`
   );
 
   if (process.env.NEXT_RUNTIME === "nodejs") {

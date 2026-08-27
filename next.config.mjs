@@ -7,7 +7,9 @@ const nextConfig = {
   // build, never needs a manual bump. Falls back to 'local' values when
   // running outside Vercel (e.g. `npm run dev`).
   env: {
-    NEXT_PUBLIC_APP_VERSION: (process.env.VERCEL_GIT_COMMIT_SHA || 'local-dev').slice(0, 7),
+    NEXT_PUBLIC_APP_VERSION: process.env.VERCEL_GIT_COMMIT_SHA
+      ? process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7)
+      : 'local-dev',
     NEXT_PUBLIC_GIT_BRANCH: process.env.VERCEL_GIT_COMMIT_REF || 'local',
     NEXT_PUBLIC_APP_ENV: process.env.VERCEL_ENV || 'development',
   },
