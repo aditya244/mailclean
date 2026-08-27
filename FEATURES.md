@@ -22,6 +22,35 @@
 
 ## Shipped
 
+### Fix: sender-group actions bypassed the confirmation modal entirely
+- **Shipped:** 2026-08-10
+- **What it is:** Found during staging regression testing — trashing (or
+  archiving, or labelling) a sender group from the grouped-by-sender view
+  executed immediately with **no confirmation modal at all**, for every
+  category including high-risk ones like Finance. The whole-category
+  action buttons always correctly opened `ConfirmModal`; the group-level
+  buttons never did — they called the Gmail action directly on click.
+- **Why:** Directly violates the product's own non-negotiable rule
+  ("never act on Gmail without explicit user confirmation," high-risk
+  categories require typing DELETE to trash). A user could accidentally
+  permanently-trash an entire sender's worth of Finance/Work/Personal
+  emails with a single misclick, no undo prompt, no friction at all.
+- **Impacted pages (test these):** Category detail, grouped-by-sender
+  view — Label (from the `•••` menu), Archive, and Trash buttons on a
+  sender group. Test both a high-risk category (Finance, Work, Personal,
+  Receipts, Travel, Transactions — should show the red "type DELETE"
+  gate) and a low-risk one (Promotions, Newsletter — should show the
+  normal confirm/cancel modal).
+- **Before:** Clicking a sender-group's Trash/Archive/Label button
+  executed immediately, no modal, no way to back out.
+- **After:** Same modal used for whole-category actions now opens for
+  group actions too, correctly scoped — shows the actual group's email
+  count (not the whole category's), names the specific sender in the
+  description, and still applies the DELETE-typing gate for high-risk
+  categories. The group Trash button also now turns solid red for
+  high-risk categories, matching the category-level button's existing
+  visual treatment.
+
 ### Classifier ruleset expansion — dating, matrimony, brokers, healthcare, gov/tax, and more
 - **Shipped:** 2026-08-09
 - **What it is:** The rule engine now recognizes ~30 new Indian sender

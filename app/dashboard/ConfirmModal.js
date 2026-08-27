@@ -8,9 +8,15 @@ export default function ConfirmModal({
   onCancel,
   action,
   category,
+  scopeLabel,
   count,
   isHighRisk,
 }) {
+  // scopeLabel describes what's being acted on in the description text —
+  // defaults to the plain category, but a sender-group action passes
+  // something like "Finance — noreply@hdfcbank.com" so the copy doesn't
+  // read as if the whole category is being trashed
+  const scope = scopeLabel || category;
   const [confirmText, setConfirmText] = useState("");
 
   // Lock body scroll when modal is open
@@ -40,15 +46,15 @@ export default function ConfirmModal({
   const ACTION_CONFIG = {
     archive: {
       title: "Archive emails",
-      description: `${count} emails from "${category}" will be removed from your inbox but kept in All Mail. You can find them anytime by searching Gmail.`,
+      description: `${count} emails from "${scope}" will be removed from your inbox but kept in All Mail. You can find them anytime by searching Gmail.`,
       confirmLabel: "Archive All",
       confirmColor: "#d97706",
     },
     trash: {
       title: isHighRisk ? "⚠️ Are you sure?" : "Move to Trash",
       description: isHighRisk
-        ? `"${category}" emails may contain important information like statements, invoices or documents. Moving ${count} emails to Trash means they'll be permanently deleted after 30 days. Are you absolutely sure?`
-        : `${count} emails from "${category}" will be moved to Trash. Gmail keeps them there for 30 days before permanent deletion.`,
+        ? `"${scope}" emails may contain important information like statements, invoices or documents. Moving ${count} emails to Trash means they'll be permanently deleted after 30 days. Are you absolutely sure?`
+        : `${count} emails from "${scope}" will be moved to Trash. Gmail keeps them there for 30 days before permanent deletion.`,
       confirmLabel: isHighRisk ? "Yes, Trash Anyway" : "Move to Trash",
       confirmColor: "#dc2626",
     },

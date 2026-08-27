@@ -194,7 +194,9 @@ export default function CategoryDetail({
   const [total, setTotal] = useState(0);
   const [overriding, setOverriding] = useState(null); // messageId being overridden
   const [error, setError] = useState(null);
-  const [modal, setModal] = useState({ isOpen: false, action: null });
+  // group is null for a whole-category action, or { domain, emails } when
+  // the modal was opened from a sender-group's action buttons instead
+  const [modal, setModal] = useState({ isOpen: false, action: null, group: null });
   const [actioning, setActioning] = useState(false);
   const [actionResult, setActionResult] = useState(null);
   const [groupActioning, setGroupActioning] = useState(null);
@@ -259,6 +261,7 @@ export default function CategoryDetail({
 
   async function executeGroupLabel(domain, groupEmails) {
     try {
+      setModal({ isOpen: false, action: null, group: null });
       setGroupActioning(domain);
       setOpenGroupMenu(null);
 
@@ -372,6 +375,7 @@ export default function CategoryDetail({
 
   async function executeGroupAction(action, domain, groupEmails) {
     try {
+      setModal({ isOpen: false, action: null, group: null });
       setGroupActioning(domain);
 
       const messageIds = groupEmails.map((e) => e.messageId);
@@ -702,11 +706,11 @@ export default function CategoryDetail({
                       >
                         <button
                           onClick={() =>
-                            executeGroupAction(
-                              "archive",
-                              group.domain,
-                              group.emails,
-                            )
+                            setModal({
+                              isOpen: true,
+                              action: "archive",
+                              group: { domain: group.domain, emails: group.emails },
+                            })
                           }
                           title={`Archives all ${group.emails.length} emails from ${group.domain}. Removes from inbox, keeps in All Mail — findable anytime via search.`}
                           style={{
@@ -726,20 +730,22 @@ export default function CategoryDetail({
 
                         <button
                           onClick={() =>
-                            executeGroupAction(
-                              "trash",
-                              group.domain,
-                              group.emails,
-                            )
+                            setModal({
+                              isOpen: true,
+                              action: "trash",
+                              group: { domain: group.domain, emails: group.emails },
+                            })
                           }
                           title={`Moves all ${group.emails.length} emails from ${group.domain} to Gmail Trash. Recoverable for 30 days.`}
                           style={{
                             padding: "4px 10px",
                             fontSize: "11px",
                             fontWeight: "500",
-                            color: "#991b1b",
-                            backgroundColor: "#fee2e2",
-                            border: "1px solid #fca5a5",
+                            color: isHighRisk ? "#ffffff" : "#991b1b",
+                            backgroundColor: isHighRisk ? "#dc2626" : "#fee2e2",
+                            border: isHighRisk
+                              ? "1px solid #b91c1c"
+                              : "1px solid #fca5a5",
                             borderRadius: "6px",
                             cursor: "pointer",
                             whiteSpace: "nowrap",
@@ -797,9 +803,14 @@ export default function CategoryDetail({
                               padding: '4px',
                             }}>
                               <button
-                                onClick={() =>
-                                  executeGroupLabel(group.domain, group.emails)
-                                }
+                                onClick={() => {
+                                  setOpenGroupMenu(null);
+                                  setModal({
+                                    isOpen: true,
+                                    action: "label",
+                                    group: { domain: group.domain, emails: group.emails },
+                                  });
+                                }}
                                 title={`Adds a Sweepyr/${category} label in Gmail to all ${group.emails.length} emails from ${group.domain}. Emails stay in your inbox.`}
                                 style={{
                                   width: "100%",
@@ -1210,10 +1221,21 @@ export default function CategoryDetail({
         isOpen={modal.isOpen}
         action={modal.action}
         category={category}
-        count={total}
+        scopeLabel={modal.group ? `${category} — ${modal.group.domain}` : category}
+        count={modal.group ? modal.group.emails.length : total}
         isHighRisk={isHighRisk}
-        onConfirm={() => executeAction(modal.action)}
-        onCancel={() => setModal({ isOpen: false, action: null })}
+        onConfirm={() => {
+          if (modal.group) {
+            if (modal.action === "label") {
+              executeGroupLabel(modal.group.domain, modal.group.emails);
+            } else {
+              executeGroupAction(modal.action, modal.group.domain, modal.group.emails);
+            }
+          } else {
+            executeAction(modal.action);
+          }
+        }}
+        onCancel={() => setModal({ isOpen: false, action: null, group: null })}
       />
     </>
   );
